@@ -6,7 +6,7 @@
         <sourceOutputDir name="src/main/generated" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <option name="outputDirectory" value="D:\workForIdea\home-vertx/src/main" />
+        <option name="outputDirectory" value="D:\workspaces\home-vertx/src/main" />
         <processor name="io.vertx.codegen.CodeGenProcessor" />
         <module name="home-vertx" />
       </profile>
