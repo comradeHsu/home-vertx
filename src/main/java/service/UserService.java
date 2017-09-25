@@ -9,13 +9,17 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.mongo.MongoClient;
+import util.Page;
 
 @ProxyGen
 @VertxGen
 public interface UserService {
 
     @Fluent
-    UserService fetchAllUsers(Handler<AsyncResult<JsonArray>> resultHandler);
+    UserService fetchAllUsers(Page page, Handler<AsyncResult<JsonArray>> resultHandler);
+
+    @Fluent
+    UserService countAllUsers(Handler<AsyncResult<Long>> resultHandler);
 
     @GenIgnore
     static UserService create(MongoClient client, Handler<AsyncResult<UserService>> readyHandle){
