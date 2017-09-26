@@ -22,7 +22,7 @@ public class DatabaseVerticle extends AbstractVerticle {
         MongoClient mongoClient = MongoClient.createShared(vertx,new JsonObject()
         .put("host",config().getString(CONFIG_MONGO_URL,"127.0.0.1"))
                 .put("port",config().getInteger("port",27017))
-                .put("maxPoolSize",config().getInteger("maxPoolSize",30))
+                .put("maxPoolSize",config().getInteger("maxPoolSize",5))
         .put("db_name",config().getString(DB_NAME, "hourse_property")));
 //                .put("driver_class", config().getString(CONFIG_MONGO_DRIVER_CLASS, "mongo.java.driver")));
 

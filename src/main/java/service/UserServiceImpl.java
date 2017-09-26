@@ -10,10 +10,11 @@ import io.vertx.rxjava.ext.mongo.MongoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.Single;
 
 public class UserServiceImpl implements UserService{
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final MongoClient mongoClient;
 
@@ -21,6 +22,8 @@ public class UserServiceImpl implements UserService{
 
     UserServiceImpl(io.vertx.ext.mongo.MongoClient client, Handler<AsyncResult<UserService>> readyHandle) {
         this.mongoClient = new MongoClient(client);
+        logger.info(mongoClient.toString());
+        Single.just(this).subscribe(RxHelper.toSubscriber(readyHandle));
     }
 
 //    private Single<>
