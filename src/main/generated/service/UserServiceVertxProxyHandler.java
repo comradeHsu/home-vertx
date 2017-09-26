@@ -122,7 +122,11 @@ public class UserServiceVertxProxyHandler extends ProxyHandler {
       accessed();
       switch (action) {
         case "fetchAllUsers": {
-          service.fetchAllUsers(createHandler(msg));
+          service.fetchAllUsers(json.getValue("pageSize") == null ? null : (json.getLong("pageSize").intValue()), json.getValue("pageNumber") == null ? null : (json.getLong("pageNumber").intValue()), createHandler(msg));
+          break;
+        }
+        case "countAllUsers": {
+          service.countAllUsers(createHandler(msg));
           break;
         }
         default: {

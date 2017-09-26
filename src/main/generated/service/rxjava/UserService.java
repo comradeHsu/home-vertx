@@ -42,14 +42,25 @@ public class UserService {
     return delegate;
   }
 
-  public UserService fetchAllUsers(Handler<AsyncResult<JsonArray>> resultHandler) { 
-    delegate.fetchAllUsers(resultHandler);
+  public UserService fetchAllUsers(int pageSize, int pageNumber, Handler<AsyncResult<JsonArray>> resultHandler) { 
+    delegate.fetchAllUsers(pageSize, pageNumber, resultHandler);
     return this;
   }
 
-  public Single<JsonArray> rxFetchAllUsers() { 
+  public Single<JsonArray> rxFetchAllUsers(int pageSize, int pageNumber) { 
     return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
-      fetchAllUsers(fut);
+      fetchAllUsers(pageSize, pageNumber, fut);
+    }));
+  }
+
+  public UserService countAllUsers(Handler<AsyncResult<Long>> resultHandler) { 
+    delegate.countAllUsers(resultHandler);
+    return this;
+  }
+
+  public Single<Long> rxCountAllUsers() { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      countAllUsers(fut);
     }));
   }
 

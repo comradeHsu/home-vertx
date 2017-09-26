@@ -32,15 +32,37 @@ var UserService = function(j_val) {
   /**
 
    @public
+   @param pageSize {number} 
+   @param pageNumber {number} 
    @param resultHandler {function} 
    @return {UserService}
    */
-  this.fetchAllUsers = function(resultHandler) {
+  this.fetchAllUsers = function(pageSize, pageNumber, resultHandler) {
     var __args = arguments;
-    if (__args.length === 1 && typeof __args[0] === 'function') {
-      j_userService["fetchAllUsers(io.vertx.core.Handler)"](function(ar) {
+    if (__args.length === 3 && typeof __args[0] ==='number' && typeof __args[1] ==='number' && typeof __args[2] === 'function') {
+      j_userService["fetchAllUsers(int,int,io.vertx.core.Handler)"](pageSize, pageNumber, function(ar) {
       if (ar.succeeded()) {
         resultHandler(utils.convReturnJson(ar.result()), null);
+      } else {
+        resultHandler(null, ar.cause());
+      }
+    });
+      return that;
+    } else throw new TypeError('function invoked with invalid arguments');
+  };
+
+  /**
+
+   @public
+   @param resultHandler {function} 
+   @return {UserService}
+   */
+  this.countAllUsers = function(resultHandler) {
+    var __args = arguments;
+    if (__args.length === 1 && typeof __args[0] === 'function') {
+      j_userService["countAllUsers(io.vertx.core.Handler)"](function(ar) {
+      if (ar.succeeded()) {
+        resultHandler(utils.convReturnLong(ar.result()), null);
       } else {
         resultHandler(null, ar.cause());
       }

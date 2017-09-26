@@ -1,6 +1,5 @@
 package service;
 
-import com.mongodb.client.model.Sorts;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
@@ -11,10 +10,6 @@ import io.vertx.rxjava.ext.mongo.MongoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
-import rx.Single;
-import util.Page;
-
-import java.util.List;
 
 public class UserServiceImpl implements UserService{
 
@@ -32,10 +27,10 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
-    public UserService fetchAllUsers(Page page, Handler<AsyncResult<JsonArray>> resultHandler) {
+    public UserService fetchAllUsers(int pageSize,int pageNumber, Handler<AsyncResult<JsonArray>> resultHandler) {
         JsonObject document = new JsonObject().put("isDeleted","0");
-        FindOptions findOptions = new FindOptions().setSkip(page.getPageNumber()*page.getPageSize())
-                .setLimit(page.getPageSize()).setSort(new JsonObject().put("createDate", 1));
+        FindOptions findOptions = new FindOptions().setSkip(pageNumber*pageSize)
+                .setLimit(pageSize).setSort(new JsonObject().put("createDate", 1));
         mongoClient.rxFindWithOptions(dataBase,document,findOptions)
         .flatMapObservable(res -> Observable.from(res))
         .collect(JsonArray::new,JsonArray::add)
