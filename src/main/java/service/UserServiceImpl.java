@@ -12,7 +12,10 @@ import org.slf4j.LoggerFactory;
 import rx.Observable;
 import rx.Scheduler;
 import rx.Single;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+
+import java.util.List;
 
 public class UserServiceImpl implements UserService{
 
@@ -20,15 +23,13 @@ public class UserServiceImpl implements UserService{
 
     private final MongoClient mongoClient;
 
-    private final String dataBase = "hourse";
+    private final String dataBase = "user";
 
     UserServiceImpl(io.vertx.ext.mongo.MongoClient client, Handler<AsyncResult<UserService>> readyHandle) {
         this.mongoClient = new MongoClient(client);
-        logger.info(mongoClient.toString());
         Single.just(this).subscribe(RxHelper.toSubscriber(readyHandle));
     }
 
-//    private Single<>
 
 
     @Override
@@ -53,6 +54,14 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserService insertUser(JsonObject user, Handler<AsyncResult<String>> resultHandler) {
         mongoClient.rxSave(dataBase,user).subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
+        return this;
+    }
+
+    @Override
+    public UserService findUser(String username, Handler<AsyncResult<JsonObject>> resultHandler) {
+        mongoClient.rxFindOne(dataBase,new JsonObject().put("username",username),null)
+                .subscribeOn(Schedulers.io())
                 .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }

@@ -24,6 +24,9 @@ public interface UserService {
     @Fluent
     UserService insertUser(JsonObject user,Handler<AsyncResult<String>> resultHandler);
 
+    @Fluent
+    UserService findUser(String username,Handler<AsyncResult<JsonObject>> resultHandler);
+
     @GenIgnore
     static UserService create(MongoClient client, Handler<AsyncResult<UserService>> readyHandle){
         return new UserServiceImpl(client,readyHandle);

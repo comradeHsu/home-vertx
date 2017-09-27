@@ -5,6 +5,7 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.serviceproxy.ProxyHelper;
+import service.HouseService;
 import service.UserService;
 
 public class DatabaseVerticle extends AbstractVerticle {
@@ -14,6 +15,8 @@ public class DatabaseVerticle extends AbstractVerticle {
     public static final String DB_NAME = "db_name";
 
     public static final String CONFIG_USERDB_QUEUE = "userdb.queue";
+
+    public static final String CONFIG_HOUSEDB_QUEUE = "housedb.queue";
 
     @Override
     public void start(Future<Void> startFuture) throws Exception {
@@ -26,6 +29,15 @@ public class DatabaseVerticle extends AbstractVerticle {
         UserService.create(mongoClient,ready -> {
             if(ready.succeeded()){
                 ProxyHelper.registerService(UserService.class,vertx,ready.result(),CONFIG_USERDB_QUEUE);
+                startFuture.complete();
+            } else {
+                startFuture.fail(ready.cause());
+            }
+        });
+
+        HouseService.create(mongoClient,ready -> {
+            if(ready.succeeded()){
+                ProxyHelper.registerService(HouseService.class,vertx,ready.result(),CONFIG_HOUSEDB_QUEUE);
                 startFuture.complete();
             } else {
                 startFuture.fail(ready.cause());
