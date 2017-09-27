@@ -8,6 +8,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 
 @ProxyGen
@@ -19,6 +20,9 @@ public interface UserService {
 
     @Fluent
     UserService countAllUsers(Handler<AsyncResult<Long>> resultHandler);
+
+    @Fluent
+    UserService insertUser(JsonObject user,Handler<AsyncResult<String>> resultHandler);
 
     @GenIgnore
     static UserService create(MongoClient client, Handler<AsyncResult<UserService>> readyHandle){

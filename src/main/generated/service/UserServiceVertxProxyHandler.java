@@ -41,6 +41,7 @@ import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.core.json.JsonArray;
 import service.UserService;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
@@ -127,6 +128,10 @@ public class UserServiceVertxProxyHandler extends ProxyHandler {
         }
         case "countAllUsers": {
           service.countAllUsers(createHandler(msg));
+          break;
+        }
+        case "insertUser": {
+          service.insertUser((io.vertx.core.json.JsonObject)json.getValue("user"), createHandler(msg));
           break;
         }
         default: {

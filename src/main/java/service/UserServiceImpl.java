@@ -10,7 +10,9 @@ import io.vertx.rxjava.ext.mongo.MongoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
+import rx.Scheduler;
 import rx.Single;
+import rx.schedulers.Schedulers;
 
 public class UserServiceImpl implements UserService{
 
@@ -45,6 +47,13 @@ public class UserServiceImpl implements UserService{
     public UserService countAllUsers(Handler<AsyncResult<Long>> resultHandler) {
         JsonObject document = new JsonObject().put("isDeleted","0");
         mongoClient.rxCount(dataBase,document).subscribe(RxHelper.toSubscriber(resultHandler));
+        return this;
+    }
+
+    @Override
+    public UserService insertUser(JsonObject user, Handler<AsyncResult<String>> resultHandler) {
+        mongoClient.rxSave(dataBase,user).subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }
 }

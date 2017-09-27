@@ -20,6 +20,7 @@ import java.util.Map;
 import rx.Observable;
 import rx.Single;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
@@ -61,6 +62,17 @@ public class UserService {
   public Single<Long> rxCountAllUsers() { 
     return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
       countAllUsers(fut);
+    }));
+  }
+
+  public UserService insertUser(JsonObject user, Handler<AsyncResult<String>> resultHandler) { 
+    delegate.insertUser(user, resultHandler);
+    return this;
+  }
+
+  public Single<String> rxInsertUser(JsonObject user) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      insertUser(user, fut);
     }));
   }
 

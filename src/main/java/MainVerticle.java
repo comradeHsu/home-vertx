@@ -1,7 +1,9 @@
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
 import io.vertx.rxjava.core.AbstractVerticle;
+import rx.Observable;
 import rx.Single;
+import rx.schedulers.Schedulers;
 
 public class MainVerticle extends AbstractVerticle {
 

@@ -54,7 +54,6 @@ public class HttpServerVerticle extends AbstractVerticle {
                 .subscribe(rs -> {
                     rs.put("pageSize",pageSize)
                             .put("pageNumber",pageNumber)
-                            .put("status",200)
                             .put("msg","success");
                     apiResponse(context,200,"data",rs);
                 },throwable -> apiFailure(context,throwable));

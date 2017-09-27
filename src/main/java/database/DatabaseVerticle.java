@@ -11,8 +11,6 @@ public class DatabaseVerticle extends AbstractVerticle {
 
     public static final String CONFIG_MONGO_URL = "host";
 
-    public static final String CONFIG_MONGO_DRIVER_CLASS = "mongo.driver_class";
-
     public static final String DB_NAME = "db_name";
 
     public static final String CONFIG_USERDB_QUEUE = "userdb.queue";
@@ -24,7 +22,6 @@ public class DatabaseVerticle extends AbstractVerticle {
                 .put("port",config().getInteger("port",27017))
                 .put("maxPoolSize",config().getInteger("maxPoolSize",5))
         .put("db_name",config().getString(DB_NAME, "hourse_property")));
-//                .put("driver_class", config().getString(CONFIG_MONGO_DRIVER_CLASS, "mongo.java.driver")));
 
         UserService.create(mongoClient,ready -> {
             if(ready.succeeded()){
