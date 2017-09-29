@@ -76,6 +76,17 @@ public class UserService {
     }));
   }
 
+  public UserService findUser(String username, Handler<AsyncResult<JsonObject>> resultHandler) { 
+    delegate.findUser(username, resultHandler);
+    return this;
+  }
+
+  public Single<JsonObject> rxFindUser(String username) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      findUser(username, fut);
+    }));
+  }
+
 
   public static  UserService newInstance(service.UserService arg) {
     return arg != null ? new UserService(arg) : null;

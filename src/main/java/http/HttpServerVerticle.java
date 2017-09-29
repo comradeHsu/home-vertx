@@ -38,6 +38,7 @@ public class HttpServerVerticle extends AbstractVerticle {
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
         router.post("/api/accounts").handler(this::getAllUsers);
+        router.post("/api/login").handler(this::login);
 
         int portNumber = config().getInteger(CONFIG_HTTP_SERVER_PORT, 8080);
         server
@@ -64,6 +65,19 @@ public class HttpServerVerticle extends AbstractVerticle {
                             .put("pageNumber",pageNumber)
                             .put("msg","success");
                     apiResponse(context,200,"data",rs);
+                },throwable -> apiFailure(context,throwable));
+    }
+
+    private void login(RoutingContext context){
+        JsonObject user = context.getBodyAsJson();
+        userService.rxFindUser(user.getString("username",null))
+                .subscribe(res -> {
+                    if(res == null || res.getString("password").equals(user.getString("password"))){
+                        context.session().put("user",res);
+                        apiResponse(context,200,"data",res);
+                    } else {
+                        apiResponse(context,201,"data","用户名或密码不正确");
+                    }
                 },throwable -> apiFailure(context,throwable));
     }
 

@@ -134,6 +134,10 @@ public class UserServiceVertxProxyHandler extends ProxyHandler {
           service.insertUser((io.vertx.core.json.JsonObject)json.getValue("user"), createHandler(msg));
           break;
         }
+        case "findUser": {
+          service.findUser((java.lang.String)json.getValue("username"), createHandler(msg));
+          break;
+        }
         default: {
           throw new IllegalStateException("Invalid action: " + action);
         }
