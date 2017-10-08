@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.rxjava.HouseService;
 import service.rxjava.UserService;
+import utils.DataUtil;
 
 public class HttpServerVerticle extends AbstractVerticle {
 
@@ -84,6 +85,7 @@ public class HttpServerVerticle extends AbstractVerticle {
                         user.put("type",res.getValue("type"));
                         Session session = context.session();
                         session.put("user",user);
+                        DataUtil.handler(res);
                         apiResponse(context,200,"data",res);
                     } else {
                         apiResponse(context,201,"data","用户名或密码不正确");
