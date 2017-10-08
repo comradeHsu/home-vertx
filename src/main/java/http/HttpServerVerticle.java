@@ -7,7 +7,12 @@ import io.vertx.rxjava.core.AbstractVerticle;
 import io.vertx.rxjava.core.http.HttpServer;
 import io.vertx.rxjava.ext.web.Router;
 import io.vertx.rxjava.ext.web.RoutingContext;
+import io.vertx.rxjava.ext.web.Session;
 import io.vertx.rxjava.ext.web.handler.BodyHandler;
+import io.vertx.rxjava.ext.web.handler.SessionHandler;
+import io.vertx.rxjava.ext.web.sstore.ClusteredSessionStore;
+import io.vertx.rxjava.ext.web.sstore.LocalSessionStore;
+import io.vertx.rxjava.ext.web.sstore.SessionStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import service.rxjava.HouseService;
@@ -36,7 +41,10 @@ public class HttpServerVerticle extends AbstractVerticle {
         HttpServer server = vertx.createHttpServer();
 
         Router router = Router.router(vertx);
+        SessionStore store = LocalSessionStore.create(vertx);
+        SessionHandler sessionHandler = SessionHandler.create(store);
         router.route().handler(BodyHandler.create());
+        router.route().handler(sessionHandler);
         router.post("/api/accounts").handler(this::getAllUsers);
         router.post("/api/login").handler(this::login);
 
@@ -72,8 +80,10 @@ public class HttpServerVerticle extends AbstractVerticle {
         JsonObject user = context.getBodyAsJson();
         userService.rxFindUser(user.getString("username",null))
                 .subscribe(res -> {
-                    if(res == null || res.getString("password").equals(user.getString("password"))){
-                        context.session().put("user",res);
+                    if(res != null && res.getString("password").equals(user.getString("password"))){
+                        user.put("type",res.getValue("type"));
+                        Session session = context.session();
+                        session.put("user",user);
                         apiResponse(context,200,"data",res);
                     } else {
                         apiResponse(context,201,"data","用户名或密码不正确");
