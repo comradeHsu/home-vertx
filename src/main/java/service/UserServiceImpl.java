@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService{
         mongoClient.rxFindWithOptions(dataBase,document,findOptions)
         .flatMapObservable(res -> Observable.from(res))
         .collect(JsonArray::new,JsonArray::add)
+                .subscribeOn(Schedulers.io())
         .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }
@@ -47,7 +48,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserService countAllUsers(Handler<AsyncResult<Long>> resultHandler) {
         JsonObject document = new JsonObject().put("isDeleted","0");
-        mongoClient.rxCount(dataBase,document).subscribe(RxHelper.toSubscriber(resultHandler));
+        mongoClient.rxCount(dataBase,document).subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }
 
