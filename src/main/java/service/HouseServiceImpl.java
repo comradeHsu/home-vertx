@@ -10,6 +10,7 @@ import io.vertx.rxjava.ext.mongo.MongoClient;
 import rx.Observable;
 import rx.Single;
 import rx.schedulers.Schedulers;
+import utils.DataUtil;
 
 public class HouseServiceImpl implements HouseService {
 
@@ -28,6 +29,7 @@ public class HouseServiceImpl implements HouseService {
         FindOptions findOptions = new FindOptions().setSkip(pageNumber*pageSize)
                 .setLimit(pageSize).setSort(new JsonObject().put("createDate", 1));
         mongoClient.rxFindWithOptions(dataBase,document,findOptions).flatMapObservable(res -> Observable.from(res))
+                .map(data -> DataUtil.noVoidhandler(data))
                 .collect(JsonArray::new,JsonArray::add)
                 .subscribeOn(Schedulers.io())
                 .subscribe(RxHelper.toSubscriber(resultHandler));
