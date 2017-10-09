@@ -10,7 +10,6 @@ import io.vertx.rxjava.ext.web.RoutingContext;
 import io.vertx.rxjava.ext.web.Session;
 import io.vertx.rxjava.ext.web.handler.BodyHandler;
 import io.vertx.rxjava.ext.web.handler.SessionHandler;
-import io.vertx.rxjava.ext.web.sstore.ClusteredSessionStore;
 import io.vertx.rxjava.ext.web.sstore.LocalSessionStore;
 import io.vertx.rxjava.ext.web.sstore.SessionStore;
 import org.slf4j.Logger;
@@ -90,6 +89,22 @@ public class HttpServerVerticle extends AbstractVerticle {
                     } else {
                         apiResponse(context,201,"data","用户名或密码不正确");
                     }
+                },throwable -> apiFailure(context,throwable));
+    }
+
+    private void findAllHouseByType(RoutingContext context){
+        JsonObject page = context.getBodyAsJson();
+        int pageSize = page.getInteger("pageSize",10);
+        int pageNumber = page.getInteger("pageNumber",0);
+        String type = context.pathParam("type");
+        houseService.rxFindAllHouseByType(pageSize,pageNumber,type)
+                .zipWith(houseService.rxCountByType(type),(array,count) -> new JsonObject()
+                        .put("data",array).put("totalCount",count))
+                .subscribe(rs -> {
+                    rs.put("pageSize",pageSize)
+                            .put("pageNumber",pageNumber)
+                            .put("msg","success");
+                    apiResponse(context,200,"data",rs);
                 },throwable -> apiFailure(context,throwable));
     }
 

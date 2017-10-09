@@ -53,6 +53,17 @@ public class HouseService {
     }));
   }
 
+  public HouseService countByType(String type, Handler<AsyncResult<Long>> resultHandler) { 
+    delegate.countByType(type, resultHandler);
+    return this;
+  }
+
+  public Single<Long> rxCountByType(String type) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      countByType(type, fut);
+    }));
+  }
+
 
   public static  HouseService newInstance(service.HouseService arg) {
     return arg != null ? new HouseService(arg) : null;

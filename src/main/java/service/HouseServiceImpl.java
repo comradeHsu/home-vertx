@@ -33,4 +33,12 @@ public class HouseServiceImpl implements HouseService {
                 .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }
+
+    @Override
+    public HouseService countByType(String type, Handler<AsyncResult<Long>> resultHandler) {
+        JsonObject document = new JsonObject().put("isDeleted","0").put("type",type);
+        mongoClient.rxCount(dataBase,document).subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
+        return this;
+    }
 }

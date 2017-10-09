@@ -17,6 +17,9 @@ public interface HouseService {
     @Fluent
     HouseService findAllHouseByType(int pageSize,int pageNumber,String type,Handler<AsyncResult<JsonArray>> resultHandler);
 
+    @Fluent
+    HouseService countByType(String type,Handler<AsyncResult<Long>> resultHandler);
+
     @GenIgnore
     static HouseService create(MongoClient mongoClient, Handler<AsyncResult<HouseService>> readyHandle){
         return new HouseServiceImpl(mongoClient, readyHandle);
