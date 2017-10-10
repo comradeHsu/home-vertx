@@ -43,4 +43,16 @@ public class HouseServiceImpl implements HouseService {
                 .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }
+
+    @Override
+    public HouseService findAllHouseByUserAndType(int pageSize, int pageNumber, String userId, String type,
+                                                  Handler<AsyncResult<JsonArray>> resultHandler) {
+        JsonObject document
+        return null;
+    }
+
+    @Override
+    public HouseService countByUserAndType(String userId, String type, Handler<AsyncResult<Long>> resultHandler) {
+        return null;
+    }
 }

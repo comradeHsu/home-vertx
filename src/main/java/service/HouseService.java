@@ -20,6 +20,12 @@ public interface HouseService {
     @Fluent
     HouseService countByType(String type,Handler<AsyncResult<Long>> resultHandler);
 
+    @Fluent
+    HouseService findAllHouseByUserAndType(int pageSize,int pageNumber,String userId, String type,Handler<AsyncResult<JsonArray>> resultHandler);
+
+    @Fluent
+    HouseService countByUserAndType(String userId, String type,Handler<AsyncResult<Long>> resultHandler);
+
     @GenIgnore
     static HouseService create(MongoClient mongoClient, Handler<AsyncResult<HouseService>> readyHandle){
         return new HouseServiceImpl(mongoClient, readyHandle);
