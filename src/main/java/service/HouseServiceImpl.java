@@ -1,16 +1,21 @@
 package service;
 
+import com.mongodb.async.client.FindIterable;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.FindOptions;
+import io.vertx.ext.mongo.impl.MongoClientImpl;
 import io.vertx.rx.java.RxHelper;
 import io.vertx.rxjava.ext.mongo.MongoClient;
 import rx.Observable;
 import rx.Single;
 import rx.schedulers.Schedulers;
 import utils.DataUtil;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class HouseServiceImpl implements HouseService {
 
@@ -46,8 +51,17 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public HouseService findAllHouseByUserAndType(int pageSize, int pageNumber, String userId, String type,
-                                                  Handler<AsyncResult<JsonArray>> resultHandler) {
-        JsonObject document
+                                                  Handler<AsyncResult<JsonArray>> resultHandler) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        JsonObject document = new JsonObject().put("$eq",new JsonObject().put("isDeleted","0").put("type",type))
+                .put("$or",new JsonObject().put("userId",userId).put("isPublic","1"));
+//        JsonObject secondDoc = new JsonObject().put("isDeleted","0").put("type",type).put("isPublic","1");
+//        Method doFind = MongoClientImpl.class.getDeclaredMethod("doFind",String.class,JsonObject.class,FindOptions.class);
+//        doFind.setAccessible(true);
+//        Object[] args = {dataBase,document,null};
+//        Object[] args1 = {dataBase,secondDoc,null};
+//        FindIterable<JsonObject> result = (FindIterable<JsonObject>) doFind.invoke(mongoClient,args);
+//        FindIterable<JsonObject> secondRes = (FindIterable<JsonObject>) doFind.invoke(mongoClient,args1);
+//        result.projection()
         return null;
     }
 
