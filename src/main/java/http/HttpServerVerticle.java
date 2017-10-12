@@ -117,7 +117,8 @@ public class HttpServerVerticle extends AbstractVerticle {
         String userId = context.pathParam("userId");
         String type = context.pathParam("type");
         houseService.rxFindAllHouseByUserAndType(pageSize,pageNumber,userId,type)
-                .map(data -> new JsonObject().put("data",data))
+                .zipWith(houseService.rxCountByUserAndType(userId,type),(array,count) -> new JsonObject()
+                        .put("data",array).put("totalCount",count))
                 .subscribe(rs -> {
                     rs.put("pageSize",pageSize)
                             .put("pageNumber",pageNumber)

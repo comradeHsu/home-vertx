@@ -46,19 +46,22 @@ public class HouseServiceImpl implements HouseService {
         return this;
     }
 
+    /**
+     * 使用了mongo的or查询
+     * @param pageSize
+     * @param pageNumber
+     * @param userId
+     * @param type
+     * @param resultHandler
+     * @return
+     */
     @Override
     public HouseService findAllHouseByUserAndType(int pageSize, int pageNumber, String userId, String type,
                                                   Handler<AsyncResult<JsonArray>> resultHandler){
+        //构建符合mongo规范的or查询 jsonObjcet对象
         JsonObject document = new JsonObject().put("isDeleted","0").put("type",type)
                 .put("$or",new JsonArray().add(new JsonObject().put("userId",userId)).add(new JsonObject().put("isPublic","1")));
-//        JsonObject secondDoc = new JsonObject().put("isDeleted","0").put("type",type).put("isPublic","1");
-//        Method doFind = MongoClientImpl.class.getDeclaredMethod("doFind",String.class,JsonObject.class,FindOptions.class);
-//        doFind.setAccessible(true);
-//        Object[] args = {dataBase,document,null};
-//        Object[] args1 = {dataBase,secondDoc,null};
-//        FindIterable<JsonObject> result = (FindIterable<JsonObject>) doFind.invoke(mongoClient,args);
-//        FindIterable<JsonObject> secondRes = (FindIterable<JsonObject>) doFind.invoke(mongoClient,args1);
-//        result.projection()
+
         FindOptions findOptions = new FindOptions().setSkip(pageNumber*pageSize)
                 .setLimit(pageSize).setSort(new JsonObject().put("createDate", 1));
         mongoClient.rxFindWithOptions(dataBase,document,findOptions).flatMapObservable(res -> Observable.from(res))
@@ -71,6 +74,11 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public HouseService countByUserAndType(String userId, String type, Handler<AsyncResult<Long>> resultHandler) {
-        return null;
+        JsonObject document = new JsonObject().put("isDeleted","0").put("type",type)
+                .put("$or",new JsonArray().add(new JsonObject().put("userId",userId))
+                        .add(new JsonObject().put("isPublic","1")));
+        mongoClient.rxCount(dataBase,document).subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
+        return this;
     }
 }
