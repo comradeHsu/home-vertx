@@ -2,6 +2,7 @@ package http;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.core.AbstractVerticle;
 import io.vertx.rxjava.core.http.HttpServer;
@@ -47,6 +48,7 @@ public class HttpServerVerticle extends AbstractVerticle {
         router.route().handler(sessionHandler);
         router.post("/api/accounts").handler(this::getAllUsers);
         router.post("/api/login").handler(this::login);
+        router.route(HttpMethod.POST,"/api/:userId/hourses/:type").handler(this::findAllHouseByUserAndType);
 
         int portNumber = config().getInteger(CONFIG_HTTP_SERVER_PORT, 8080);
         server
@@ -100,6 +102,22 @@ public class HttpServerVerticle extends AbstractVerticle {
         houseService.rxFindAllHouseByType(pageSize,pageNumber,type)
                 .zipWith(houseService.rxCountByType(type),(array,count) -> new JsonObject()
                         .put("data",array).put("totalCount",count))
+                .subscribe(rs -> {
+                    rs.put("pageSize",pageSize)
+                            .put("pageNumber",pageNumber)
+                            .put("msg","success");
+                    apiResponse(context,200,"data",rs);
+                },throwable -> apiFailure(context,throwable));
+    }
+
+    private void findAllHouseByUserAndType(RoutingContext context){
+        JsonObject page = context.getBodyAsJson();
+        int pageSize = page.getInteger("pageSize",10);
+        int pageNumber = page.getInteger("pageNumber",0);
+        String userId = context.pathParam("userId");
+        String type = context.pathParam("type");
+        houseService.rxFindAllHouseByUserAndType(pageSize,pageNumber,userId,type)
+                .map(data -> new JsonObject().put("data",data))
                 .subscribe(rs -> {
                     rs.put("pageSize",pageSize)
                             .put("pageNumber",pageNumber)

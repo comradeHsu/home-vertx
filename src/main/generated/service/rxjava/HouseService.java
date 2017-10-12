@@ -64,6 +64,28 @@ public class HouseService {
     }));
   }
 
+  public HouseService findAllHouseByUserAndType(int pageSize, int pageNumber, String userId, String type, Handler<AsyncResult<JsonArray>> resultHandler) { 
+    delegate.findAllHouseByUserAndType(pageSize, pageNumber, userId, type, resultHandler);
+    return this;
+  }
+
+  public Single<JsonArray> rxFindAllHouseByUserAndType(int pageSize, int pageNumber, String userId, String type) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      findAllHouseByUserAndType(pageSize, pageNumber, userId, type, fut);
+    }));
+  }
+
+  public HouseService countByUserAndType(String userId, String type, Handler<AsyncResult<Long>> resultHandler) { 
+    delegate.countByUserAndType(userId, type, resultHandler);
+    return this;
+  }
+
+  public Single<Long> rxCountByUserAndType(String userId, String type) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      countByUserAndType(userId, type, fut);
+    }));
+  }
+
 
   public static  HouseService newInstance(service.HouseService arg) {
     return arg != null ? new HouseService(arg) : null;

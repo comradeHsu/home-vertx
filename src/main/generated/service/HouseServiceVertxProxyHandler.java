@@ -129,6 +129,14 @@ public class HouseServiceVertxProxyHandler extends ProxyHandler {
           service.countByType((java.lang.String)json.getValue("type"), createHandler(msg));
           break;
         }
+        case "findAllHouseByUserAndType": {
+          service.findAllHouseByUserAndType(json.getValue("pageSize") == null ? null : (json.getLong("pageSize").intValue()), json.getValue("pageNumber") == null ? null : (json.getLong("pageNumber").intValue()), (java.lang.String)json.getValue("userId"), (java.lang.String)json.getValue("type"), createHandler(msg));
+          break;
+        }
+        case "countByUserAndType": {
+          service.countByUserAndType((java.lang.String)json.getValue("userId"), (java.lang.String)json.getValue("type"), createHandler(msg));
+          break;
+        }
         default: {
           throw new IllegalStateException("Invalid action: " + action);
         }

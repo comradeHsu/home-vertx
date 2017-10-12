@@ -10,7 +10,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.mongo.MongoClient;
 
-import java.lang.reflect.InvocationTargetException;
 
 @ProxyGen
 @VertxGen
@@ -23,7 +22,7 @@ public interface HouseService {
     HouseService countByType(String type,Handler<AsyncResult<Long>> resultHandler);
 
     @Fluent
-    HouseService findAllHouseByUserAndType(int pageSize,int pageNumber,String userId, String type,Handler<AsyncResult<JsonArray>> resultHandler) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
+    HouseService findAllHouseByUserAndType(int pageSize,int pageNumber,String userId, String type,Handler<AsyncResult<JsonArray>> resultHandler);
 
     @Fluent
     HouseService countByUserAndType(String userId, String type,Handler<AsyncResult<Long>> resultHandler);
