@@ -48,6 +48,8 @@ public class HttpServerVerticle extends AbstractVerticle {
         router.route().handler(sessionHandler);
         router.post("/api/accounts").handler(this::getAllUsers);
         router.post("/api/login").handler(this::login);
+
+        //restful url 这样声名
         router.route(HttpMethod.POST,"/api/:userId/hourses/:type").handler(this::findAllHouseByUserAndType);
 
         int portNumber = config().getInteger(CONFIG_HTTP_SERVER_PORT, 8080);
