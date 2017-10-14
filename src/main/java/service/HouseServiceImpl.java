@@ -81,4 +81,9 @@ public class HouseServiceImpl implements HouseService {
                 .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }
+
+    @Override
+    public HouseService insertHouse(JsonObject house, Handler<AsyncResult<String>> resultHandler) {
+        return null;
+    }
 }

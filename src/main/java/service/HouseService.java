@@ -8,6 +8,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 
 
@@ -26,6 +27,9 @@ public interface HouseService {
 
     @Fluent
     HouseService countByUserAndType(String userId, String type,Handler<AsyncResult<Long>> resultHandler);
+
+    @Fluent
+    HouseService insertHouse(JsonObject house,Handler<AsyncResult<String>> resultHandler);
 
     @GenIgnore
     static HouseService create(MongoClient mongoClient, Handler<AsyncResult<HouseService>> readyHandle){
