@@ -4,6 +4,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import service.rxjava.HouseService;
 
+import java.util.OptionalInt;
+
 public class HouseHandler extends BaseHandler{
 
     private HouseService houseService;
@@ -13,9 +15,10 @@ public class HouseHandler extends BaseHandler{
     }
 
     public void findAllHouseByType(RoutingContext context){
-        JsonObject page = context.getBodyAsJson();
-        int pageSize = page.getInteger("pageSize",10);
-        int pageNumber = page.getInteger("pageNumber",0);
+//        int pageSize = page.getInteger("pageSize",10);
+//        int pageNumber = page.getInteger("pageNumber",0);
+        int pageSize = OptionalInt.of(Integer.valueOf(context.request().getParam("pageSize"))).orElse(10);
+        int pageNumber = OptionalInt.of(Integer.valueOf(context.request().getParam("pageNumber"))).orElse(0);
         String type = context.pathParam("type");
         houseService.rxFindAllHouseByType(pageSize,pageNumber,type)
                 .zipWith(houseService.rxCountByType(type),(array,count) -> new JsonObject()

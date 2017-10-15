@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService{
     public UserService fetchAllUsers(int pageSize,int pageNumber, Handler<AsyncResult<JsonArray>> resultHandler) {
         JsonObject document = new JsonObject().put("isDeleted","0");
         FindOptions findOptions = new FindOptions().setSkip(pageNumber*pageSize)
-                .setLimit(pageSize).setSort(new JsonObject().put("createDate", 1));
+                .setLimit(pageSize).setSort(new JsonObject().put("createDate", -1));
         mongoClient.rxFindWithOptions(dataBase,document,findOptions)
         .flatMapObservable(res -> Observable.from(res))
         .collect(JsonArray::new,JsonArray::add)

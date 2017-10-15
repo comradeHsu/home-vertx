@@ -29,7 +29,7 @@ public class HouseServiceImpl implements HouseService {
     public HouseService findAllHouseByType(int pageSize, int pageNumber, String type, Handler<AsyncResult<JsonArray>> resultHandler) {
         JsonObject document = new JsonObject().put("isDeleted","0").put("type",type);
         FindOptions findOptions = new FindOptions().setSkip(pageNumber*pageSize)
-                .setLimit(pageSize).setSort(new JsonObject().put("createDate", 1));
+                .setLimit(pageSize).setSort(new JsonObject().put("createDate", -1));
         mongoClient.rxFindWithOptions(dataBase,document,findOptions).flatMapObservable(res -> Observable.from(res))
                 .map(data -> DataUtil.noVoidhandler(data))
                 .collect(JsonArray::new,JsonArray::add)
