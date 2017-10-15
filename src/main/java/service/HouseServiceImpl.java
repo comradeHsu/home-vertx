@@ -84,6 +84,9 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public HouseService insertHouse(JsonObject house, Handler<AsyncResult<String>> resultHandler) {
-        return null;
+        JsonObject document = new JsonObject().put("isDeleted","0");
+        mongoClient.rxSave(dataBase,document).subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
+        return this;
     }
 }
