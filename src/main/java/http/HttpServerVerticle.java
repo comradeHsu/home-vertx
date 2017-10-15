@@ -1,5 +1,7 @@
 package http;
 
+import handler.HouseHandler;
+import handler.UserHandler;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -31,13 +33,19 @@ public class HttpServerVerticle extends AbstractVerticle {
 
     private HouseService houseService;
 
+    private UserHandler userHandler;
+
+    private HouseHandler houseHandler;
+
 
     public void start(Future<Void> startFuture) throws Exception {
         String userDbQueue = config().getString(CONFIG_USERDB_QUEUE, "userdb.queue");
         userService = service.UserService.createProxy(vertx.getDelegate(),userDbQueue);
+        userHandler = new UserHandler(userService);
 
         String houseDbQueue = config().getString(CONFIG_HOUSEDB_QUEUE,"housedb.queue");
         houseService = service.HouseService.createProxy(vertx.getDelegate(),houseDbQueue);
+        houseHandler = new HouseHandler(houseService);
 
         HttpServer server = vertx.createHttpServer();
 
@@ -46,12 +54,12 @@ public class HttpServerVerticle extends AbstractVerticle {
         SessionHandler sessionHandler = SessionHandler.create(store);
         router.route().handler(BodyHandler.create());
         router.route().handler(sessionHandler);
-        router.post("/api/accounts").handler(this::getAllUsers);
-        router.post("/api/login").handler(this::login);
+        router.post("/api/accounts").handler(userHandler::getAllUsers);
+        router.post("/api/login").handler(userHandler::login);
 
         //restful url 这样声名
-        router.route(HttpMethod.POST,"/api/:userId/hourses/:type").handler(this::findAllHouseByUserAndType);
-        router.route(HttpMethod.GET,"/api/front/hourses/:type").handler(this::findAllHouseByType);
+        router.route(HttpMethod.POST,"/api/:userId/hourses/:type").handler(houseHandler::findAllHouseByUserAndType);
+        router.route(HttpMethod.GET,"/api/front/hourses/:type").handler(houseHandler::findAllHouseByType);
 
         int portNumber = config().getInteger(CONFIG_HTTP_SERVER_PORT, 8080);
         server
@@ -66,88 +74,6 @@ public class HttpServerVerticle extends AbstractVerticle {
                 });
     }
 
-    private void getAllUsers(RoutingContext context){
-        JsonObject page = context.getBodyAsJson();
-        int pageSize = page.getInteger("pageSize",10);
-        int pageNumber = page.getInteger("pageNumber",0);
-        userService.rxFetchAllUsers(pageSize,pageNumber)
-                .zipWith(userService.rxCountAllUsers(),(array,count) -> new JsonObject()
-                .put("data",array).put("totalCount",count))
-                .subscribe(rs -> {
-                    rs.put("pageSize",pageSize)
-                            .put("pageNumber",pageNumber)
-                            .put("msg","success");
-                    apiResponse(context,200,"data",rs);
-                },throwable -> apiFailure(context,throwable));
-    }
-
-    private void login(RoutingContext context){
-        JsonObject user = context.getBodyAsJson();
-        userService.rxFindUser(user.getString("username",null))
-                .subscribe(res -> {
-                    if(res != null && res.getString("password").equals(user.getString("password"))){
-                        user.put("type",res.getValue("type"));
-                        Session session = context.session();
-                        session.put("user",user);
-                        DataUtil.handler(res);
-                        apiResponse(context,200,"data",res);
-                    } else {
-                        apiResponse(context,201,"data","用户名或密码不正确");
-                    }
-                },throwable -> apiFailure(context,throwable));
-    }
-
-    private void findAllHouseByType(RoutingContext context){
-        JsonObject page = context.getBodyAsJson();
-        int pageSize = page.getInteger("pageSize",10);
-        int pageNumber = page.getInteger("pageNumber",0);
-        String type = context.pathParam("type");
-        houseService.rxFindAllHouseByType(pageSize,pageNumber,type)
-                .zipWith(houseService.rxCountByType(type),(array,count) -> new JsonObject()
-                        .put("data",array).put("totalCount",count))
-                .subscribe(rs -> {
-                    rs.put("pageSize",pageSize)
-                            .put("pageNumber",pageNumber)
-                            .put("msg","success");
-                    apiResponse(context,200,"data",rs);
-                },throwable -> apiFailure(context,throwable));
-    }
-
-    private void findAllHouseByUserAndType(RoutingContext context){
-        JsonObject page = context.getBodyAsJson();
-        int pageSize = page.getInteger("pageSize",10);
-        int pageNumber = page.getInteger("pageNumber",0);
-        String userId = context.pathParam("userId");
-        String type = context.pathParam("type");
-        houseService.rxFindAllHouseByUserAndType(pageSize,pageNumber,userId,type)
-                .zipWith(houseService.rxCountByUserAndType(userId,type),(array,count) -> new JsonObject()
-                        .put("data",array).put("totalCount",count))
-                .subscribe(rs -> {
-                    rs.put("pageSize",pageSize)
-                            .put("pageNumber",pageNumber)
-                            .put("msg","success");
-                    apiResponse(context,200,"data",rs);
-                },throwable -> apiFailure(context,throwable));
-    }
-
-    private void apiFailure(RoutingContext context, int statusCode, String error) {
-        context.response().setStatusCode(statusCode);
-        context.response().putHeader("Content-Type", "application/json");
-        context.response().end(new JsonObject()
-                .put("success", false)
-                .put("error", error).encode());
-    }
-
-    private void apiFailure(RoutingContext context, Throwable t) {
-        apiFailure(context, 500, t.getMessage());
-    }
 
 
-    private void apiResponse(RoutingContext context, int statusCode, String jsonField, Object jsonData) {
-        context.response().setStatusCode(statusCode);
-        context.response().putHeader("Content-Type", "application/json");
-        JsonObject wrapped = new JsonObject().put("success", true);
-        if (jsonField != null && jsonData != null) wrapped.put(jsonField, jsonData);
-        context.response().end(wrapped.encode());
-    }
 }

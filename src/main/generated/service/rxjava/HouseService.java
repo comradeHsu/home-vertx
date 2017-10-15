@@ -20,6 +20,7 @@ import java.util.Map;
 import rx.Observable;
 import rx.Single;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
@@ -83,6 +84,17 @@ public class HouseService {
   public Single<Long> rxCountByUserAndType(String userId, String type) { 
     return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
       countByUserAndType(userId, type, fut);
+    }));
+  }
+
+  public HouseService insertHouse(JsonObject house, Handler<AsyncResult<String>> resultHandler) { 
+    delegate.insertHouse(house, resultHandler);
+    return this;
+  }
+
+  public Single<String> rxInsertHouse(JsonObject house) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      insertHouse(house, fut);
     }));
   }
 

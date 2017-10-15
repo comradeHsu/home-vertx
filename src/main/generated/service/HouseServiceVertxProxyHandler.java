@@ -41,6 +41,7 @@ import io.vertx.serviceproxy.ServiceException;
 import io.vertx.serviceproxy.ServiceExceptionMessageCodec;
 import io.vertx.core.json.JsonArray;
 import service.HouseService;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 
@@ -135,6 +136,10 @@ public class HouseServiceVertxProxyHandler extends ProxyHandler {
         }
         case "countByUserAndType": {
           service.countByUserAndType((java.lang.String)json.getValue("userId"), (java.lang.String)json.getValue("type"), createHandler(msg));
+          break;
+        }
+        case "insertHouse": {
+          service.insertHouse((io.vertx.core.json.JsonObject)json.getValue("house"), createHandler(msg));
           break;
         }
         default: {
