@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserService deleteUserById(String id, Handler<AsyncResult<JsonObject>> resultHandler) {
-        JsonObject document = new JsonObject();
+        JsonObject document = new JsonObject().put("_id",id);
         mongoClient.rxFindOneAndDelete(dataBase,document).subscribeOn(Schedulers.io())
                 .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;

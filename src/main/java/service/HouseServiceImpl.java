@@ -89,4 +89,13 @@ public class HouseServiceImpl implements HouseService {
                 .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }
+
+    @Override
+    public HouseService update(JsonObject house, Handler<AsyncResult<JsonObject>> resultHandler) {
+        JsonObject query = new JsonObject().put("_id",house.getValue("id"));
+        mongoClient.rxFindOneAndUpdate(dataBase,query,house).subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
+        return this;
+    }
+
 }
