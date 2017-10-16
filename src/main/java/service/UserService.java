@@ -27,6 +27,9 @@ public interface UserService {
     @Fluent
     UserService findUser(String username,Handler<AsyncResult<JsonObject>> resultHandler);
 
+    @Fluent
+    UserService deleteUserById(String id,Handler<AsyncResult<JsonObject>> resultHandler);
+
     @GenIgnore
     static UserService create(MongoClient client, Handler<AsyncResult<UserService>> readyHandle){
         return new UserServiceImpl(client,readyHandle);

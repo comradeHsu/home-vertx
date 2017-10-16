@@ -67,4 +67,12 @@ public class UserServiceImpl implements UserService{
                 .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }
+
+    @Override
+    public UserService deleteUserById(String id, Handler<AsyncResult<JsonObject>> resultHandler) {
+        JsonObject document = new JsonObject();
+        mongoClient.rxFindOneAndDelete(dataBase,document).subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
+        return this;
+    }
 }
