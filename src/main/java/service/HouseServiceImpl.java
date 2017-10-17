@@ -94,9 +94,9 @@ public class HouseServiceImpl implements HouseService {
 
     @Override
     public HouseService update(JsonObject house, Handler<AsyncResult<JsonObject>> resultHandler) {
-        JsonObject query = new JsonObject().put("_id",house.getValue("id"));
+        JsonObject query = new JsonObject().put("_id",new JsonObject().put("$oid",house.getValue("id")));
         house.remove("id");
-        mongoClient.rxFindOneAndUpdate(dataBase,query,house).subscribeOn(Schedulers.io())
+        mongoClient.rxFindOneAndUpdate(dataBase,query,new JsonObject().put("$set",house)).subscribeOn(Schedulers.io())
                 .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
     }

@@ -4,7 +4,10 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava.ext.web.RoutingContext;
 import service.rxjava.HouseService;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.OptionalInt;
 
@@ -62,7 +65,7 @@ public class HouseHandler extends BaseHandler{
 
     public void update(RoutingContext context){
         JsonObject house = context.getBodyAsJson();
-        house.put("updateDate", Instant.now());
+        house.put("updateDate", Instant.now()).put("createDate",Instant.MIN.plusNanos(house.getLong("createDate")));
         houseService.rxUpdate(house).map(r -> new JsonObject().put("data",r)).subscribe(rs -> {
             rs.put("msg","success");
             apiResponse(context,200,"data",rs);
