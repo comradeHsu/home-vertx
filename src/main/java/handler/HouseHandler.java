@@ -56,7 +56,7 @@ public class HouseHandler extends BaseHandler{
     public void insertHouse(RoutingContext context){
         JsonObject house = context.getBodyAsJson();
         String type = context.request().getParam("type");
-        house.put("createDate",new Date()).put("type",type);
+        house.put("createDate",Instant.now()).put("type",type);
         houseService.rxInsertHouse(house).map(r -> new JsonObject().put("data",r)).subscribe(rs -> {
             rs.put("msg","success");
             apiResponse(context,200,"data",rs);
@@ -65,7 +65,7 @@ public class HouseHandler extends BaseHandler{
 
     public void update(RoutingContext context){
         JsonObject house = context.getBodyAsJson();
-        house.put("updateDate", Instant.now()).put("createDate",Instant.MIN.plusNanos(house.getLong("createDate")));
+        house.put("updateDate", Instant.now()).put("createDate",new Date(house.getLong("createDate")).toInstant());
         houseService.rxUpdate(house).map(r -> new JsonObject().put("data",r)).subscribe(rs -> {
             rs.put("msg","success");
             apiResponse(context,200,"data",rs);
