@@ -44,4 +44,12 @@ public class UserHandler extends BaseHandler{
                     }
                 },throwable -> apiFailure(context,throwable));
     }
+
+    public void deleteUser(RoutingContext context){
+        String userId = context.pathParam("userId");
+        userService.rxDeleteUserById(userId).map(r -> new JsonObject().put("data",r)).subscribe(rs -> {
+            rs.put("msg","success");
+            apiResponse(context,200,"data",rs);
+        },throwable -> apiFailure(context,throwable));
+    }
 }
