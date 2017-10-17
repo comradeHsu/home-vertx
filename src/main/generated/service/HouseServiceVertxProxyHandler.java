@@ -142,6 +142,10 @@ public class HouseServiceVertxProxyHandler extends ProxyHandler {
           service.insertHouse((io.vertx.core.json.JsonObject)json.getValue("house"), createHandler(msg));
           break;
         }
+        case "update": {
+          service.update((io.vertx.core.json.JsonObject)json.getValue("house"), createHandler(msg));
+          break;
+        }
         default: {
           throw new IllegalStateException("Invalid action: " + action);
         }

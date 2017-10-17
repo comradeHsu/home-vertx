@@ -138,6 +138,10 @@ public class UserServiceVertxProxyHandler extends ProxyHandler {
           service.findUser((java.lang.String)json.getValue("username"), createHandler(msg));
           break;
         }
+        case "deleteUserById": {
+          service.deleteUserById((java.lang.String)json.getValue("id"), createHandler(msg));
+          break;
+        }
         default: {
           throw new IllegalStateException("Invalid action: " + action);
         }

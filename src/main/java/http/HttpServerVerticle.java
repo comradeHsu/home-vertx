@@ -56,6 +56,7 @@ public class HttpServerVerticle extends AbstractVerticle {
         router.route().handler(sessionHandler);
         router.post("/api/accounts").handler(userHandler::getAllUsers);
         router.post("/api/login").handler(userHandler::login);
+        router.put("/api/update").handler(houseHandler::update);
 
         //restful url 这样声名
         router.route(HttpMethod.POST,"/api/:userId/hourses/:type").handler(houseHandler::findAllHouseByUserAndType);

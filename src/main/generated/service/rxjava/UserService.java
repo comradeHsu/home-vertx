@@ -87,6 +87,17 @@ public class UserService {
     }));
   }
 
+  public UserService deleteUserById(String id, Handler<AsyncResult<JsonObject>> resultHandler) { 
+    delegate.deleteUserById(id, resultHandler);
+    return this;
+  }
+
+  public Single<JsonObject> rxDeleteUserById(String id) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      deleteUserById(id, fut);
+    }));
+  }
+
 
   public static  UserService newInstance(service.UserService arg) {
     return arg != null ? new UserService(arg) : null;

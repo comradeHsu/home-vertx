@@ -98,6 +98,17 @@ public class HouseService {
     }));
   }
 
+  public HouseService update(JsonObject house, Handler<AsyncResult<JsonObject>> resultHandler) { 
+    delegate.update(house, resultHandler);
+    return this;
+  }
+
+  public Single<JsonObject> rxUpdate(JsonObject house) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      update(house, fut);
+    }));
+  }
+
 
   public static  HouseService newInstance(service.HouseService arg) {
     return arg != null ? new HouseService(arg) : null;

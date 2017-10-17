@@ -13,6 +13,8 @@ import rx.Single;
 import rx.schedulers.Schedulers;
 import utils.DataUtil;
 
+import java.util.Date;
+
 
 public class HouseServiceImpl implements HouseService {
 
@@ -93,6 +95,7 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public HouseService update(JsonObject house, Handler<AsyncResult<JsonObject>> resultHandler) {
         JsonObject query = new JsonObject().put("_id",house.getValue("id"));
+        house.remove("id");
         mongoClient.rxFindOneAndUpdate(dataBase,query,house).subscribeOn(Schedulers.io())
                 .subscribe(RxHelper.toSubscriber(resultHandler));
         return this;
