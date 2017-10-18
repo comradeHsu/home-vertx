@@ -71,4 +71,12 @@ public class HouseHandler extends BaseHandler{
             apiResponse(context,200,"data",rs);
         },throwable -> apiFailure(context,throwable));
     }
+
+    public void deleteById(RoutingContext context){
+        String id = context.pathParam("id");
+        houseService.rxDeleteById(id).subscribe(r -> {
+            JsonObject rs = new JsonObject().put("data","success").put("msg","success");
+            apiResponse(context,200,"data",rs);
+        },throwable -> apiFailure(context,throwable));
+    }
 }

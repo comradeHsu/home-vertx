@@ -109,6 +109,17 @@ public class HouseService {
     }));
   }
 
+  public HouseService deleteById(String id, Handler<AsyncResult<Void>> resultHandler) { 
+    delegate.deleteById(id, resultHandler);
+    return this;
+  }
+
+  public Single<Void> rxDeleteById(String id) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      deleteById(id, fut);
+    }));
+  }
+
 
   public static  HouseService newInstance(service.HouseService arg) {
     return arg != null ? new HouseService(arg) : null;

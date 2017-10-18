@@ -101,4 +101,13 @@ public class HouseServiceImpl implements HouseService {
         return this;
     }
 
+    @Override
+    public HouseService deleteById(String id, Handler<AsyncResult<Void>> resultHandler) {
+        JsonObject query = new JsonObject().put("_id",new JsonObject().put("$oid",id));
+        JsonObject document = new JsonObject().put("$set",new JsonObject().put("isDeleted","1"));
+        mongoClient.rxUpdate(dataBase,query,document).subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
+        return this;
+    }
+
 }

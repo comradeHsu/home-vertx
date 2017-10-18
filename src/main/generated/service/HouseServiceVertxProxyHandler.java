@@ -146,6 +146,10 @@ public class HouseServiceVertxProxyHandler extends ProxyHandler {
           service.update((io.vertx.core.json.JsonObject)json.getValue("house"), createHandler(msg));
           break;
         }
+        case "deleteById": {
+          service.deleteById((java.lang.String)json.getValue("id"), createHandler(msg));
+          break;
+        }
         default: {
           throw new IllegalStateException("Invalid action: " + action);
         }
