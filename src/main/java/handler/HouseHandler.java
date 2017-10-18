@@ -79,4 +79,13 @@ public class HouseHandler extends BaseHandler{
             apiResponse(context,200,"data",rs);
         },throwable -> apiFailure(context,throwable));
     }
+
+    public void findById(RoutingContext context){
+        String id = context.pathParam("id");
+        houseService.rxFindById(id).map(res -> new JsonObject().put("data",res))
+                .subscribe(rs -> {
+                    rs.put("msg","success");
+                    apiResponse(context,200,"data",rs);
+                },throwable -> apiFailure(context,throwable));
+    }
 }

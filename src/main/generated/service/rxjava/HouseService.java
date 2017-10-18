@@ -120,6 +120,17 @@ public class HouseService {
     }));
   }
 
+  public HouseService findById(String id, Handler<AsyncResult<JsonObject>> resultHandler) { 
+    delegate.findById(id, resultHandler);
+    return this;
+  }
+
+  public Single<JsonObject> rxFindById(String id) { 
+    return Single.create(new io.vertx.rx.java.SingleOnSubscribeAdapter<>(fut -> {
+      findById(id, fut);
+    }));
+  }
+
 
   public static  HouseService newInstance(service.HouseService arg) {
     return arg != null ? new HouseService(arg) : null;

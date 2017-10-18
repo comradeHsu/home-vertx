@@ -110,4 +110,13 @@ public class HouseServiceImpl implements HouseService {
         return this;
     }
 
+    @Override
+    public HouseService findById(String id, Handler<AsyncResult<JsonObject>> resultHandler) {
+        JsonObject query = new JsonObject().put("_id",new JsonObject().put("$oid",id));
+        mongoClient.rxFindOne(dataBase,query,null).map(res -> DataUtil.noVoidhandler(res))
+                .subscribeOn(Schedulers.io())
+                .subscribe(RxHelper.toSubscriber(resultHandler));
+        return this;
+    }
+
 }

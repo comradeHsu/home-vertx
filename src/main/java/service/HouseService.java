@@ -37,6 +37,9 @@ public interface HouseService {
     @Fluent
     HouseService deleteById(String id,Handler<AsyncResult<Void>> resultHandler);
 
+    @Fluent
+    HouseService findById(String id,Handler<AsyncResult<JsonObject>> resultHandler);
+
     @GenIgnore
     static HouseService create(MongoClient mongoClient, Handler<AsyncResult<HouseService>> readyHandle){
         return new HouseServiceImpl(mongoClient, readyHandle);
