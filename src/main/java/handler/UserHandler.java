@@ -6,6 +6,8 @@ import io.vertx.rxjava.ext.web.Session;
 import service.rxjava.UserService;
 import utils.DataUtil;
 
+import java.time.Instant;
+
 public class UserHandler extends BaseHandler{
 
     private UserService userService;
@@ -48,6 +50,15 @@ public class UserHandler extends BaseHandler{
     public void deleteUser(RoutingContext context){
         String userId = context.pathParam("userId");
         userService.rxDeleteUserById(userId).map(r -> new JsonObject().put("data",r)).subscribe(rs -> {
+            rs.put("msg","success");
+            apiResponse(context,200,"data",rs);
+        },throwable -> apiFailure(context,throwable));
+    }
+
+    public void insertUser(RoutingContext context){
+        JsonObject user = context.getBodyAsJson();
+        user.put("createDate", Instant.now()).put("isDeleted","0");
+        userService.rxInsertUser(user).map(r -> new JsonObject().put("data",r)).subscribe(rs -> {
             rs.put("msg","success");
             apiResponse(context,200,"data",rs);
         },throwable -> apiFailure(context,throwable));
